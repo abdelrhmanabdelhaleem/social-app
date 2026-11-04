@@ -1,1 +1,23 @@
-<p>feed works!</p>
+<div class="min-h-screen bg-slate-100 p-4 lg:p-6">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Left Column: Navigation Sidebar Component -->
+    <div class="hidden lg:block lg:col-span-3">
+      <app-sidebar></app-sidebar>
+    </div>
+
+    <!-- Center Column: Create Post & Posts Feed Components (increased spacing) -->
+    <div class="lg:col-span-6 flex flex-col gap-6">
+      <!-- Create Post Component -->
+      <app-create-post></app-create-post>
+
+      <!-- Feed Posts Cards Components -->
+      <app-post-card></app-post-card>
+      <app-post-card></app-post-card>
+    </div>
+
+    <!-- Right Column: Suggested Friends Component -->
+    <div class="hidden lg:block lg:col-span-3">
+      <app-suggested-friends></app-suggested-friends>
+    </div>
+  </div>
+</div>

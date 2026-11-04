@@ -51,7 +51,7 @@ export class LoginComponent implements OnDestroy {
             localStorage.setItem('userToken', response.data.token);
           }
           // Navigate to home or dashboard on success
-          this._Router.navigate(['/home']);
+          this._Router.navigate(['/feed']);
         },
         error: (err) => {
           this.isLoading = false;

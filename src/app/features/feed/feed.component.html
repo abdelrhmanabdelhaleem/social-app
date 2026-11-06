@@ -1,21 +1,29 @@
 <div class="min-h-screen bg-slate-100 p-4 lg:p-6">
   <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <!-- Left Column: Navigation Sidebar Component -->
+    <!-- Left Column: Sidebar -->
     <div class="hidden lg:block lg:col-span-3">
       <app-sidebar></app-sidebar>
     </div>
 
-    <!-- Center Column: Create Post & Posts Feed Components (increased spacing) -->
+    <!-- Center Column: Create Post & Dynamic Posts Loop -->
     <div class="lg:col-span-6 flex flex-col gap-6">
       <!-- Create Post Component -->
-      <app-create-post></app-create-post>
+      <app-create-post (postCreated)="getPosts()"></app-create-post>
 
-      <!-- Feed Posts Cards Components -->
-      <app-post-card></app-post-card>
-      <app-post-card></app-post-card>
+      <!-- Loading State -->
+      @if (isLoading) {
+        <div class="bg-white p-6 rounded-2xl shadow-sm text-center text-slate-500">
+          Loading posts...
+        </div>
+      }
+
+      <!-- Loop through posts list using Angular 20 @for control flow -->
+      @for (post of postsList; track post._id) {
+        <app-post-card [post]="post" (postDeleted)="removePostFromList($event)"></app-post-card>
+      }
     </div>
 
-    <!-- Right Column: Suggested Friends Component -->
+    <!-- Right Column: Suggested Friends -->
     <div class="hidden lg:block lg:col-span-3">
       <app-suggested-friends></app-suggested-friends>
     </div>

@@ -49,6 +49,7 @@ export class LoginComponent implements OnDestroy {
           // Optionally save user token to local storage
           if (response.data?.token) {
             localStorage.setItem('userToken', response.data.token);
+            localStorage.setItem('userInfo', JSON.stringify(response.data.user));
           }
           // Navigate to home or dashboard on success
           this._Router.navigate(['/feed']);

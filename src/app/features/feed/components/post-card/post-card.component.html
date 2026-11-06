@@ -1,18 +1,21 @@
-<div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-  <!-- Post Header: User Info & Options -->
+<div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 relative">
+  <!-- Post Header: User Info & Options Button -->
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
       <img
-        src="https://pub-3cba56bacf9f4965bbb0989e07dada12.r2.dev/linkedPosts/default-profile.png"
-        alt="User"
+        [src]="
+          post.user.photo ||
+          'https://pub-3cba56bacf9f4965bbb0989e07dada12.r2.dev/linkedPosts/default-profile.png'
+        "
+        [alt]="post.user.name"
         class="w-10 h-10 rounded-full object-cover border border-slate-200"
       />
       <div>
-        <h4 class="font-bold text-slate-800 text-sm">Aut nobis dolore rer</h4>
+        <h4 class="font-bold text-slate-800 text-sm">{{ post.user.name }}</h4>
         <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-          <span>&#64;ert</span>
+          <span>&#64;{{ post.user.username }}</span>
           <span>•</span>
-          <span>10m</span>
+          <span>{{ post.createdAt | date: 'shortTime' }}</span>
           <span>•</span>
           <span class="inline-flex items-center gap-1">
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,24 +26,117 @@
                 d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            Public
+            {{ post.privacy }}
           </span>
         </div>
       </div>
     </div>
-    <button type="button" class="text-slate-400 hover:text-slate-600 transition-colors">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-        <circle cx="5" cy="12" r="2" />
-        <circle cx="12" cy="12" r="2" />
-        <circle cx="19" cy="12" r="2" />
-      </svg>
-    </button>
+
+    <!-- Options Menu Toggle Button -->
+    <div class="relative">
+      <button
+        (click)="toggleDropdown()"
+        type="button"
+        class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <circle cx="5" cy="12" r="2" />
+          <circle cx="12" cy="12" r="2" />
+          <circle cx="19" cy="12" r="2" />
+        </svg>
+      </button>
+
+      <!-- Dropdown Menu -->
+      @if (isDropdownOpen) {
+        <div
+          class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 transition-all"
+        >
+          <!-- Save Post -->
+          <button
+            (click)="closeDropdown()"
+            type="button"
+            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer"
+          >
+            <svg
+              class="w-4 h-4 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+              />
+            </svg>
+            <span>Save post</span>
+          </button>
+
+          <!-- Edit & Delete (Appears ONLY if it is MY post) -->
+          @if (isMyPost) {
+            <button
+              (click)="closeDropdown()"
+              type="button"
+              class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer"
+            >
+              <svg
+                class="w-4 h-4 text-slate-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              <span>Edit post</span>
+            </button>
+
+            <hr class="my-1 border-slate-100" />
+
+            <!-- Delete Post Button triggers onDeletePost() method -->
+            <button
+              (click)="onDeletePost()"
+              type="button"
+              [disabled]="isDeleting"
+              class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer disabled:opacity-50"
+            >
+              <svg
+                class="w-4 h-4 text-rose-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              <span>{{ isDeleting ? 'Deleting...' : 'Delete post' }}</span>
+            </button>
+          }
+        </div>
+      }
+    </div>
   </div>
 
   <!-- Post Content Text -->
-  <p class="text-slate-800 text-sm leading-relaxed">hi</p>
+  <p class="text-slate-800 text-sm leading-relaxed">{{ post.body }}</p>
 
-  <!-- Post Stats (Likes, Shares, Comments Count) -->
+  <!-- Post Image (if available) -->
+  @if (post.image) {
+    <div class="rounded-xl overflow-hidden border border-slate-100">
+      <img [src]="post.image" alt="Post Image" class="w-full object-cover max-h-96" />
+    </div>
+  }
+
+  <!-- Post Stats -->
   <div
     class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100"
   >
@@ -49,16 +145,16 @@
         class="w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-[10px]"
         >👍</span
       >
-      <span>0 likes</span>
+      <span>{{ post.likesCount }} likes</span>
     </div>
     <div class="flex items-center gap-3">
-      <span>0 shares</span>
-      <span>0 comments</span>
+      <span>{{ post.sharesCount }} shares</span>
+      <span>{{ post.commentsCount }} comments</span>
       <a href="#" class="text-blue-600 font-semibold hover:underline">View details</a>
     </div>
   </div>
 
-  <!-- Post Action Buttons (Like, Comment, Share) -->
+  <!-- Action Buttons -->
   <div class="grid grid-cols-3 pt-2 border-t border-slate-100 text-center">
     <button
       type="button"
@@ -103,4 +199,34 @@
       <span>Share</span>
     </button>
   </div>
+
+  <!-- Top Comment Section -->
+  @if (post.topComment) {
+    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3 mt-3">
+      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Top Comment</span>
+
+      <div class="flex items-start gap-3">
+        <img
+          [src]="
+            post.topComment.commentCreator.photo ||
+            'https://pub-3cba56bacf9f4965bbb0989e07dada12.r2.dev/linkedPosts/default-profile.png'
+          "
+          [alt]="post.topComment.commentCreator.name"
+          class="w-8 h-8 rounded-full object-cover border border-slate-200 mt-0.5"
+        />
+        <div class="flex-1 bg-white p-3 rounded-xl border border-slate-200/60 shadow-xs">
+          <h5 class="font-bold text-slate-800 text-xs">
+            {{ post.topComment.commentCreator.name }}
+          </h5>
+          <p class="text-slate-700 text-xs mt-1 leading-relaxed">{{ post.topComment.content }}</p>
+        </div>
+      </div>
+
+      @if (post.commentsCount > 1) {
+        <a href="#" class="inline-block text-xs font-bold text-blue-600 hover:underline pt-1">
+          View all comments
+        </a>
+      }
+    </div>
+  }
 </div>

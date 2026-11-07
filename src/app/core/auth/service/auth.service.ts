@@ -11,6 +11,12 @@ import { ISigninRequest, ISignupRequest, ISignupResponse } from '../../models/ia
 export class AuthService {
   private readonly _HttpClient = inject(HttpClient);
   private readonly _Router = inject(Router);
+  // Headers configuration matching Postman's Bearer Token format
+  myHeaders: object = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('userToken') || ''}`,
+    },
+  };
 
   // Handle user signup request
   signup(userData: ISignupRequest): Observable<ISignupResponse> {
@@ -28,5 +34,9 @@ export class AuthService {
 
     // 2. Redirect to login using parseUrl
     this._Router.navigate(['/login']);
+  }
+  // Get user profile data
+  getProfileData(): Observable<any> {
+    return this._HttpClient.get(`${environment.baseUrl}/users/profile-data`, this.myHeaders);
   }
 }

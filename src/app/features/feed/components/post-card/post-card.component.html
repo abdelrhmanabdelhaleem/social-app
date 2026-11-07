@@ -154,8 +154,9 @@
     </div>
   </div>
 
-  <!-- Action Buttons -->
+  <!-- Action Buttons (3 Columns: Like, Comment, Share) -->
   <div class="grid grid-cols-3 pt-2 border-t border-slate-100 text-center">
+    <!-- Like Button -->
     <button
       type="button"
       class="flex items-center justify-center gap-2 py-2 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
@@ -170,8 +171,11 @@
       </svg>
       <span>Like</span>
     </button>
+
+    <!-- Comment Button (Triggers toggleComments) -->
     <button
       type="button"
+      (click)="toggleComments()"
       class="flex items-center justify-center gap-2 py-2 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,6 +188,8 @@
       </svg>
       <span>Comment</span>
     </button>
+
+    <!-- Share Button -->
     <button
       type="button"
       class="flex items-center justify-center gap-2 py-2 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
@@ -200,33 +206,10 @@
     </button>
   </div>
 
-  <!-- Top Comment Section -->
-  @if (post.topComment) {
-    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3 mt-3">
-      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Top Comment</span>
-
-      <div class="flex items-start gap-3">
-        <img
-          [src]="
-            post.topComment.commentCreator.photo ||
-            'https://pub-3cba56bacf9f4965bbb0989e07dada12.r2.dev/linkedPosts/default-profile.png'
-          "
-          [alt]="post.topComment.commentCreator.name"
-          class="w-8 h-8 rounded-full object-cover border border-slate-200 mt-0.5"
-        />
-        <div class="flex-1 bg-white p-3 rounded-xl border border-slate-200/60 shadow-xs">
-          <h5 class="font-bold text-slate-800 text-xs">
-            {{ post.topComment.commentCreator.name }}
-          </h5>
-          <p class="text-slate-700 text-xs mt-1 leading-relaxed">{{ post.topComment.content }}</p>
-        </div>
-      </div>
-
-      @if (post.commentsCount > 1) {
-        <a href="#" class="inline-block text-xs font-bold text-blue-600 hover:underline pt-1">
-          View all comments
-        </a>
-      }
-    </div>
-  }
+  <!-- Comments Component (Pass [isExpanded] or let it handle its view based on click) -->
+  <app-comments
+    [postId]="post._id || post.id"
+    [commentsCount]="post.commentsCount"
+    [externalToggle]="showComments"
+  ></app-comments>
 </div>

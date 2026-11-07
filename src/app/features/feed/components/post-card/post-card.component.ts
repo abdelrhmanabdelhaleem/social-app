@@ -2,18 +2,25 @@ import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular
 import { CommonModule } from '@angular/common';
 import { PostsService } from '../../../../core/auth/service/posts.service';
 import { IPost } from '../../../../core/models/ipost.interface';
+import { CommentsComponent } from '../comments/comments.component';
 
 @Component({
   selector: 'app-post-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CommentsComponent],
   templateUrl: './post-card.component.html',
   styleUrls: ['./post-card.component.css'],
 })
 export class PostCardComponent implements OnInit {
   @Input() post!: IPost;
   @Output() postDeleted = new EventEmitter<string>();
+  // Add this property inside PostCardComponent class
+  showComments: boolean = false;
 
+  // Toggle function when clicking the Comment action button
+  toggleComments(): void {
+    this.showComments = !this.showComments;
+  }
   private readonly _PostsService = inject(PostsService);
 
   isDropdownOpen: boolean = false;
